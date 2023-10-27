@@ -1,4 +1,5 @@
 from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QSpinBox, QDoubleSpinBox, QFrame, QLabel, QAbstractSpinBox, QScrollArea, QComboBox, QLineEdit,QPushButton
+from PyQt6.QtGui import QPalette, QColor, QFont
 import numpy as np
 import random
 import sys
@@ -30,6 +31,29 @@ class SpinboxTableApp(QWidget):
     def __init__(self):
         super().__init__()
         layout = QVBoxLayout()
+        #label principal
+
+        
+
+        #definiendo color
+        blue_palette = QPalette()
+        blue_palette.setColor(QPalette.ColorRole.Window, QColor(200, 220, 240))
+        blue_palette.setColor(QPalette.ColorRole.WindowText, QColor(0, 0, 0))
+        blue_palette.setColor(QPalette.ColorRole.Base, QColor(180, 200, 220))
+        blue_palette.setColor(QPalette.ColorRole.AlternateBase, QColor(200, 220, 240))
+        blue_palette.setColor(QPalette.ColorRole.ToolTipBase, QColor(255, 255, 255))
+        blue_palette.setColor(QPalette.ColorRole.ToolTipText, QColor(0, 0, 0))
+        blue_palette.setColor(QPalette.ColorRole.Text, QColor(0, 0, 0))
+        blue_palette.setColor(QPalette.ColorRole.Button, QColor(135, 206, 250))
+        blue_palette.setColor(QPalette.ColorRole.ButtonText, QColor(0, 0, 0))
+        blue_palette.setColor(QPalette.ColorRole.Highlight, QColor(70, 130, 180))
+        blue_palette.setColor(QPalette.ColorRole.HighlightedText, QColor(0, 0, 0))
+        self.setPalette(blue_palette)
+
+        title_label = QLabel("CALCULADORA DE MATRICES")
+        title_label.setFont(QFont("Arial", 40, QFont.Weight.Bold))
+        layout.addWidget(title_label)
+
 
         self.result_label = QLabel()
         
@@ -179,7 +203,43 @@ class SpinboxTableApp(QWidget):
 
             plt.show()
 
+        elif len(self.__matriz_resultante)==2:
+            
 
+            # Definir la matriz de coeficientes del sistema de ecuaciones 2x2
+            matriz_coeficientes = self.matriz1
+
+            # Definir los términos independientes
+            terminos_independientes = [float(n) for n in self.input_line.text().split(',')]
+
+            # Resolver el sistema de ecuaciones para obtener las soluciones
+            soluciones = self.__matriz_resultante
+
+            # Graficar las ecuaciones
+            x = np.linspace(-10, 10, 100)
+
+            # Ecuación 1: ax + by = c
+            y1 = (terminos_independientes[0] - matriz_coeficientes[0, 0] * x) / matriz_coeficientes[0, 1]
+
+            # Ecuación 2: dx + ey = f
+            y2 = (terminos_independientes[1] - matriz_coeficientes[1, 0] * x) / matriz_coeficientes[1, 1]
+
+            plt.plot(x, y1, label='Ecuación 1')
+            plt.plot(x, y2, label='Ecuación 2')
+
+            # Marcar la solución del sistema
+            plt.scatter(soluciones[0], soluciones[1], color='red', label='Solución')
+
+            # Configuraciones adicionales
+            plt.axhline(0, color='black', linewidth=0.5)
+            plt.axvline(0, color='black', linewidth=0.5)
+            plt.grid(color='gray', linestyle='--', linewidth=0.5)
+            plt.legend()
+            plt.xlabel('x')
+            plt.ylabel('y')
+            plt.title('Sistema de Ecuaciones Lineales 2x2')
+
+            plt.show()
 
 
     def tableEdited(self):
@@ -190,7 +250,6 @@ class SpinboxTableApp(QWidget):
             self.matriz1[self.valores['row'], self.valores['column']] = self.valores['value']
         else:
             self.matriz2[self.valores['row'], self.valores['column']] = self.valores['value']
-            print(self.matriz2)
         self.update()
     
     def update(self):
@@ -247,14 +306,63 @@ class SpinboxTableApp(QWidget):
 
                 self.__matriz_resultante = augmented_matrix[:, -1]
                 print(f'Resultado: {self.__matriz_resultante}')
-                self.gausTotal.setText(f'Resultado:\n x: {self.__matriz_resultante[0]} \n y: {self.__matriz_resultante[1] } z: {self.__matriz_resultante[2]}')
-                self.make_table("TableTotal", self.frameTotal, self.matriz1)  # La solución es una lista de valores
-                self.plot.setEnabled(True)
+
+
+                if len(self.__matriz_resultante) ==2:
+
+                    self.gausTotal.setText(f'Resultado:\n x: {self.__matriz_resultante[0]} \n y: {self.__matriz_resultante[1] } z {self.__matriz_resultante[2]}: ')
+
+                    self.plot.setEnabled(True)
+                else:
+                    self.gausTotal.setText(f'Resultado:\n x: {self.__matriz_resultante[0]} \n y: {self.__matriz_resultante[1] } z: {self.__matriz_resultante[2]} ')
+                    self.plot.setEnabled(True)
 
 
 
             except ValueError:
                     self.result_label.setText('Entrada inválida. Asegúrate de ingresar los términos independientes correctamente.')
+
+
+        elif self.options.currentText() == "Resolver por regla de Cramer":
+            self.table2.hide()
+            self.tableTotal.hide()
+            self.plot.show()
+            self.plot.setDisabled(True)
+
+            try:
+                vector_constants = [float(n) for n in self.input_line.text().split(',')]
+                
+
+                if len(vector_constants) == 3:
+                    self.gausTotal.show()
+
+
+                    self.__matriz_resultante = np.linalg.solve(self.matriz1, vector_constants)
+                    self.gausTotal.setText(f'Resultado:\n x: {self.__matriz_resultante[0]} \n y: {self.__matriz_resultante[1] } z  {self.__matriz_resultante[2]} ')
+                    self.plot.setEnabled(True)
+
+                elif len(vector_constants) ==2:
+                    self.gausTotal.show()
+
+                    self.__matriz_resultante = np.linalg.solve(self.matriz1, vector_constants)
+                    self.gausTotal.setText(f'Resultado:\n x: {self.__matriz_resultante[0]} \n y: {self.__matriz_resultante[1] } ')
+                    self.plot.setEnabled(True)
+            
+
+
+                
+
+
+
+            except ValueError:
+                pass
+            except IndexError:
+                pass
+
+   
+                
+
+
 
 
         
