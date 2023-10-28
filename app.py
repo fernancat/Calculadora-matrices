@@ -308,13 +308,14 @@ class SpinboxTableApp(QWidget):
                 print(f'Resultado: {self.__matriz_resultante}')
 
 
-                if len(self.__matriz_resultante) ==2:
+                if len(self.__matriz_resultante) ==3:
 
-                    self.gausTotal.setText(f'Resultado:\n x: {self.__matriz_resultante[0]} \n y: {self.__matriz_resultante[1] } z {self.__matriz_resultante[2]}: ')
 
+                    self.gausTotal.setText(f'Resultado:\n x: {self.__matriz_resultante[0]} \n y: {self.__matriz_resultante[1] }  ')
                     self.plot.setEnabled(True)
                 else:
-                    self.gausTotal.setText(f'Resultado:\n x: {self.__matriz_resultante[0]} \n y: {self.__matriz_resultante[1] } z: {self.__matriz_resultante[2]} ')
+
+                    self.gausTotal.setText(f'Resultado:\n x: {self.__matriz_resultante[0]} \n y: {self.__matriz_resultante[1]} z: {self.__matriz_resultante[2]} ')
                     self.plot.setEnabled(True)
 
 
@@ -359,18 +360,6 @@ class SpinboxTableApp(QWidget):
             except IndexError:
                 pass
 
-   
-                
-
-
-
-
-        
-             
-             
-        
-
-            
 
 
             
